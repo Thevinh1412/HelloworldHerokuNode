@@ -1,7 +1,26 @@
-var http = require('http');
-var port = process.env.PORT || 3000;
+const express = require('express');
+const engines = require('consolidate');
+const app = express();
 
-http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello World!');
-}).listen(port);
+var bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: false }));
+
+var publicDir = require('path').join(__dirname,'/public');
+app.use(express.static(publicDir));
+
+//npm i handlebars consolidate --save
+app.engine('hbs',engines.handlebars);
+app.set('views','./views');
+app.set('view engine','hbs');
+
+var indexController = require('./index.js');
+app.use('/index',indexController);
+
+var productController = require('./product.js');
+app.use('/product',productController);
+
+var customerController = require('./customer.js');
+app.use('/customer',customerController);
+
+
+var server=app.listen(3000,function() {});
